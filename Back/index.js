@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 3000;
 
 // ── Middlewares globales ────────────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://encuesta-ecru.vercel.app/' || '*',
+  origin: process.env.FRONTEND_URL || 'https://encuesta-ecru.vercel.app/' || 'https://encuesta-6b87.onrender.com/' || '*',
   methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
