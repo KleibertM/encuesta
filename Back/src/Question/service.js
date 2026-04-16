@@ -1,5 +1,5 @@
-import { createError } from "../Auth/middleware";
-import { Question } from "../data/models";
+import { createError } from "../Auth/middleware.js";
+import { Question } from "../data/models/index.js";
 
 export const createQuestionService = async ({ title, description }) => {
   return await Question.create({ title, description });

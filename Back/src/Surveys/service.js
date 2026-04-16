@@ -12,9 +12,9 @@ export const createSurveyService = async ({
   answers,
 }) => {
   // 🔍 Validaciones
-  if (!Array.isArray(answers) || answers.length !== 5) {
-    throw createError(400, "Se requieren exactamente 5 respuestas");
-  }
+  // if (!Array.isArray(answers) || answers.length !== 5) {
+  //   throw createError(400, "Se requieren exactamente 5 respuestas");
+  // }
 
   for (const ans of answers) {
     if (!PREGUNTAS_VALIDAS.includes(ans.question_id)) {

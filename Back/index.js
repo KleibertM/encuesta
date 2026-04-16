@@ -32,7 +32,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/surveys', surveyRouter);
 app.use('/dashboard', dashboardRouter);
-app.use("/api/questions", questionRouter);
+app.use("/api", questionRouter);
 
 // ── Ruta no encontrada ──────────────────────────────────────────
 app.use((req, res) => {

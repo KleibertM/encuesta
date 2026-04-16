@@ -1,73 +1,35 @@
+import axios from "axios";
+import { useEffect } from "react";
 import { useState } from "react";
 
 export default function EncuestaForm() {
+    const [preguntas, setPreguntas] = useState([]);
     const [respuestas, setRespuestas] = useState({});
     const [resultado, setResultado] = useState(null);
     const [resumen, setResumen] = useState(null);
     const [listaEncuestas, setListaEncuestas] = useState([]);
 
-    const preguntas = [
-        {
-            id: 1,
-            titulo: "Amabilidad y Empatía",
-            descripcion:
-                "¿El personal le brindó un trato respetuoso y mantuvo una actitud de escucha durante su atención?",
-        },
-        {
-            id: 2,
-            titulo: "Claridad en la Información",
-            descripcion:
-                "¿Las explicaciones brindadas por el funcionario fueron claras y fáciles de entender?",
-        },
-        {
-            id: 3,
-            titulo: "Agilidad y Tiempo de Respuesta",
-            descripcion:
-                "¿Considera que el tiempo de espera y la duración de su atención fueron eficientes?",
-        },
-        {
-            id: 4,
-            titulo: "Capacidad de Gestión",
-            descripcion:
-                "¿El servidor público demostró conocimiento para orientarlo o gestionar su trámite?",
-        },
-        {
-            id: 5,
-            titulo: "Satisfacción General",
-            descripcion:
-                "En términos generales, ¿qué tan satisfecho se siente con la atención recibida hoy?",
-        },
-    ];
+    useEffect(() => {
+        const fetchPreguntas = async () => {
+            try {
+                const res = await axios.get("http://localhost:3001/api/questions");
 
-
-    const obtenerResumen = () => {
-        const historial = JSON.parse(localStorage.getItem("encuestas")) || [];
-
-        if (historial.length === 0) return null;
-
-        const totalEncuestas = historial.length;
-
-        const sumaPromedios = historial.reduce((acc, item) => {
-            const promedio = item.resultado?.promedio || item.promedio || 0;
-            return acc + parseFloat(promedio);
-        }, 0);
-
-        const promedioGeneral = (sumaPromedios / totalEncuestas).toFixed(2);
-
-        return {
-            totalEncuestas,
-            promedioGeneral,
+                setPreguntas(res.data.data);
+            } catch (error) {
+                console.error("Error cargando preguntas", error);
+            }
         };
-    };
+
+        fetchPreguntas();
+    }, []);
+
     const handleChange = (preguntaId, valor) => {
         setRespuestas({
             ...respuestas,
             [preguntaId]: valor,
         });
     };
-    const obtenerEncuestas = () => {
-        return JSON.parse(localStorage.getItem("encuestas")) || [];
-    };
+
     const calcularResultados = (respuestas) => {
         const valores = Object.values(respuestas).filter(
             (v) => typeof v === "number"
@@ -84,36 +46,55 @@ export default function EncuestaForm() {
         };
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        for (let i = 1; i <= 5; i++) {
-            if (!respuestas[i]) {
+        for (const pregunta of preguntas) {
+            if (!respuestas[pregunta.id]) {
                 alert("Responde todas las preguntas");
                 return;
             }
         }
-
         const resultadoCalculado = calcularResultados(respuestas);
 
-        const encuestaCompleta = {
-            id: Date.now(),
-            fecha: new Date().toLocaleString(),
-            respuestas,
-            sugerencia: respuestas.sugerencias || "",
-            resultado: resultadoCalculado,
-        };
-        // 🔥 Guardar en localStorage
-        const historial = JSON.parse(localStorage.getItem("encuestas")) || [];
+        const answers = preguntas.map((pregunta) => ({
+            question_id: pregunta.id,
+            question_title: pregunta.title,
+            score: respuestas[pregunta.id],
+        }));
 
-        historial.push(encuestaCompleta);
 
-        localStorage.setItem("encuestas", JSON.stringify(historial));
-        setResultado(resultadoCalculado);
-        setRespuestas({});
-        setListaEncuestas(obtenerEncuestas())
-        setResumen(obtenerResumen())
+        try {
+            // ✅ Enviar al backend
+            const response = await axios.post("http://localhost:3001/surveys", {
+                respondent_name: "Anonimo",
+                suggestion: respuestas.sugerencias || "",
+                answers,
+            });
 
+            // ✅ Crear objeto local (para demo / historial)
+            const encuestaCompleta = {
+                id: Date.now(),
+                fecha: new Date().toLocaleString(),
+                respuestas,
+                sugerencia: respuestas.sugerencias || "",
+                resultado: resultadoCalculado,
+            };
+
+            // ✅ Guardar en localStorage
+            const historial = JSON.parse(localStorage.getItem("encuestas")) || [];
+            historial.push(encuestaCompleta);
+            localStorage.setItem("encuestas", JSON.stringify(historial));
+
+            // ✅ Actualizar UI
+            setResultado(resultadoCalculado);
+            setRespuestas({});
+            setListaEncuestas(historial);
+
+        } catch (error) {
+            console.error("Error enviando encuesta:", error);
+            alert("Error al enviar la encuesta");
+        }
     };
 
     return (
@@ -137,10 +118,10 @@ export default function EncuestaForm() {
                             className="p-4 border rounded-xl hover:shadow-md transition"
                         >
                             <h2 className="font-semibold text-lg mb-1">
-                                {pregunta.titulo}
+                                {pregunta.title}
                             </h2>
                             <p className="text-sm text-gray-500 mb-4">
-                                {pregunta.descripcion}
+                                {pregunta.description}
                             </p>
 
                             <div className="flex justify-between md:justify-start md:gap-4">
@@ -183,55 +164,6 @@ export default function EncuestaForm() {
                 >
                     Enviar encuesta
                 </button>
-
-                
-                <button
-                    type="button"
-                    onClick={() => setListaEncuestas(obtenerEncuestas())}
-                    className="w-full mt-2 bg-green-500 text-white py-2 rounded-xl"
-                >
-                    Ver historial de encuestas
-                </button>
-
-                <button
-                    type="button"
-                    onClick={() => setResumen(obtenerResumen())}
-                    className="w-full mt-3 bg-red-800 text-white py-2 rounded-xl hover:opacity-80"
-                >
-                    Ver resultados acumulados
-                </button>
-
-                {listaEncuestas.length > 0 && (
-                    <div className="mt-6 space-y-4 max-h-80 overflow-y-auto">
-                        {listaEncuestas.map((encuesta) => (
-                            <div
-                                key={encuesta.id}
-                                className="p-4 border rounded-xl bg-white shadow-sm"
-                            >
-                                <p className="text-xs text-gray-500 mb-2">
-                                    {encuesta.fecha}
-                                </p>
-
-                                <p className="font-semibold">
-                                    ⭐ Promedio: {encuesta.resultado.promedio}
-                                </p>
-
-                                <p className="font-semibold">
-                                    📊 Respuestas:{" "}
-                                    {Object.values(encuesta.respuestas)
-                                        .filter((v) => typeof v === "number")
-                                        .join(" - ")}
-                                </p>
-
-                                {encuesta.sugerencia && (
-                                    <p className="font-semibold mt-2 italic text-gray-600">
-                                        💬 \"{encuesta.sugerencia}\"
-                                    </p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
                 {resultado && (
                     <div className="mt-6 p-5 rounded-xl bg-gray-50 border animate-fade-in">
                         <h2 className="font-bold text-lg mb-3 text-center">
@@ -256,21 +188,6 @@ export default function EncuestaForm() {
                     </div>
                 )}
 
-                {resumen && (
-                    <div className="mt-4 p-4 rounded-xl bg-black text-white">
-                        <h3 className="text-center font-bold mb-2">
-                            📊 Resumen General
-                        </h3>
-
-                        <p className="text-center">
-                            Total encuestas: {resumen.totalEncuestas}
-                        </p>
-
-                        <p className="text-center text-lg font-semibold">
-                            Promedio general: ⭐ {resumen.promedioGeneral}
-                        </p>
-                    </div>
-                )}
             </form>
         </div>
     );
