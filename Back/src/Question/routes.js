@@ -8,7 +8,7 @@ import {
 const questionRouter = Router();
 
 questionRouter.get("/questions", getQuestions);
-questionRouter.post("/", createQuestion);
-questionRouter.patch("/:id/deactivate", deactivateQuestion);
+questionRouter.post("/questions", createQuestion);
+questionRouter.patch("/questions/:id/deactivate", deactivateQuestion);
 
 export default questionRouter;
