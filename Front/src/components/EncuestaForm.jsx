@@ -12,7 +12,7 @@ export default function EncuestaForm() {
     useEffect(() => {
         const fetchPreguntas = async () => {
             try {
-                const res = await axios.get("http://localhost:3001/api/questions");
+                const res = await axios.get("https://encuesta-6b87.onrender.com/api/questions");
 
                 setPreguntas(res.data.data);
             } catch (error) {
