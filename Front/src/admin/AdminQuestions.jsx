@@ -13,7 +13,7 @@ export default function AdminQuestions() {
   const [resumen, setResumen] = useState(null);
 
 
-  const API = "http://localhost:3001/api/questions";
+  const API = "https://encuesta-6b87.onrender.com/api/questions";
 
   // 🔄 Cargar preguntas
   const fetchQuestions = async () => {
@@ -27,7 +27,7 @@ export default function AdminQuestions() {
   };
   const obtenerEncuestas = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/surveys", {
+      const res = await axios.get("https://encuesta-6b87.onrender.com/surveys", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

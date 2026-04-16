@@ -17,7 +17,7 @@ export default function AdminDashboard() {
     const [trend, setTrend] = useState([]);
     const [distribution, setDistribution] = useState([]);
 
-    const API = "http://localhost:3001";
+    const API = "https://encuesta-6b87.onrender.com";
 
     const fetchData = async () => {
         try {

@@ -27,7 +27,7 @@ export default function LoginFrm({ onLogin, onClose }) {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:3001/auth/login", form);
+      const res = await axios.post("https://encuesta-6b87.onrender.com/auth/login", form);
 
       const { token, user } = res.data;
 

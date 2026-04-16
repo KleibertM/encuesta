@@ -66,7 +66,7 @@ export default function EncuestaForm() {
 
         try {
             // ✅ Enviar al backend
-            const response = await axios.post("http://localhost:3001/surveys", {
+            const response = await axios.post("https://encuesta-6b87.onrender.com/surveys", {
                 respondent_name: "Anonimo",
                 suggestion: respuestas.sugerencias || "",
                 answers,
