@@ -17,22 +17,22 @@ const PORT = process.env.PORT || 3000;
 // ── Middlewares globales ────────────────────────────────────────
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://encuesta-phdh5b30b-kleiberts-projects.vercel.app",
-  "https://encuesta-ecru.vercel.app",
+  "https://encuesta-2lemullyy-kleiberts-projects.vercel.app",
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("No permitido por CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
 }));
+
+app.options("*", cors());
 
 app.use(express.json());
 
