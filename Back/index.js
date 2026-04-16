@@ -17,12 +17,14 @@ const PORT = process.env.PORT || 3000;
 // ── Middlewares globales ────────────────────────────────────────
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://encuesta-2lemullyy-kleiberts-projects.vercel.app",
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (
+      !origin || 
+      origin.includes("vercel.app") // 🔥 PERMITE TODOS LOS VERCEL
+    ) {
       callback(null, true);
     } else {
       callback(new Error("No permitido por CORS"));
