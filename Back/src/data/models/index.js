@@ -2,7 +2,7 @@ import sequelize from "../pool.js";
 
 import User from "./User.js";
 import Answer from "./Answer.js";
-import SurveyResponse from "./surveyResponse.js";
+import SurveyResponse from "./SurveyResponse.js";
 import Question from "./Question.js";
 
 // Relaciones
