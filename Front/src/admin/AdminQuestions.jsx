@@ -27,9 +27,9 @@ export default function AdminQuestions() {
     }
   };
   const cargarHistorial = async () => {
-  const datos = await obtenerEncuestas();
-  setListaEncuestas(datos); // Aquí es donde realmente se guarda el array
-};
+    const datos = await obtenerEncuestas();
+    setListaEncuestas(datos); // Aquí es donde realmente se guarda el array
+  };
   const obtenerEncuestas = async () => {
     try {
       const res = await axios.get(`${API2}/surveys`, {
@@ -72,15 +72,15 @@ export default function AdminQuestions() {
   //   cargar();
   // }, []);
 
-const manejarResumen = () => {
-  // Solo calculamos si ya hay encuestas cargadas
-  if (listaEncuestas.length > 0) {
-    const res = calcularResumen(listaEncuestas);
-    setResumen(res);
-  } else {
-    alert("Primero carga el historial de encuestas");
-  }
-};
+  const manejarResumen = () => {
+    // Solo calculamos si ya hay encuestas cargadas
+    if (listaEncuestas.length > 0) {
+      const res = calcularResumen(listaEncuestas);
+      setResumen(res);
+    } else {
+      alert("Primero carga el historial de encuestas");
+    }
+  };
   const calcularResumen = (encuestas) => {
     if (!encuestas.length) return null;
 
@@ -147,7 +147,7 @@ const manejarResumen = () => {
     if (!confirm("¿Activar esta pregunta?")) return;
 
     try {
-      await axios.patch(`${API2}/api/questions/deactivate/${id}`);
+      await axios.patch(`${API2}/api/questions/activate/${id}`);
       fetchQuestions();
     } catch (err) {
       console.error(err);
@@ -216,21 +216,21 @@ const manejarResumen = () => {
                       {q.description}
                     </p>
                   </div>
-                  {q.is_active ? 
-                  (<button
-                    onClick={() => handleDeactivate(q.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
-                  >
-                    Desactivar
-                  </button> ):
-                    (<button
+                  {q.is_active ? (
+                    <button
+                      onClick={() => handleDeactivate(q.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm transition-colors"
+                    >
+                      Desactivar
+                    </button>
+                  ) : (
+                    <button
                       onClick={() => handleActivate(q.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm transition-colors"
                     >
                       Activar
-                    </button>)}
-
-
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

@@ -6,7 +6,6 @@ export default function EncuestaForm() {
     const [preguntas, setPreguntas] = useState([]);
     const [respuestas, setRespuestas] = useState({});
     const [resultado, setResultado] = useState(null);
-    const [resumen, setResumen] = useState(null);
     const [listaEncuestas, setListaEncuestas] = useState([]);
 
     useEffect(() => {
