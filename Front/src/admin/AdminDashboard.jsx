@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     const [distribution, setDistribution] = useState([]);
 
     const API2 = "https://encuesta-6b87.onrender.com";
-const API = "http://localhost:3000";
+    const API = "http://localhost:3000";
     const fetchData = async () => {
         try {
             const token = localStorage.getItem("token");

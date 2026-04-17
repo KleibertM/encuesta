@@ -23,15 +23,18 @@ app.use(cors({
   origin: (origin, callback) => {
     if (
       !origin || 
-      origin.includes("vercel.app") // 🔥 PERMITE TODOS LOS VERCEL
+      allowedOrigins.includes(origin) || 
+      origin.includes("vercel.app")
     ) {
       callback(null, true);
     } else {
+      console.log("Origen bloqueado por CORS:", origin); // Útil para debug
       callback(new Error("No permitido por CORS"));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true // Agrégalo si manejas cookies o sesiones
 }));
 
 app.use(express.json());

@@ -26,6 +26,10 @@ export default function AdminQuestions() {
       alert("Error al cargar preguntas");
     }
   };
+  const cargarHistorial = async () => {
+  const datos = await obtenerEncuestas();
+  setListaEncuestas(datos); // Aquí es donde realmente se guarda el array
+};
   const obtenerEncuestas = async () => {
     try {
       const res = await axios.get(`${API2}/surveys`, {
@@ -68,7 +72,15 @@ export default function AdminQuestions() {
   //   cargar();
   // }, []);
 
-
+const manejarResumen = () => {
+  // Solo calculamos si ya hay encuestas cargadas
+  if (listaEncuestas.length > 0) {
+    const res = calcularResumen(listaEncuestas);
+    setResumen(res);
+  } else {
+    alert("Primero carga el historial de encuestas");
+  }
+};
   const calcularResumen = (encuestas) => {
     if (!encuestas.length) return null;
 
@@ -106,13 +118,13 @@ export default function AdminQuestions() {
     try {
       setLoading(true);
 
-      await axios.post(API2, form);
+      await axios.post(`${API2}/api/questions`, form);
 
       setForm({ title: "", description: "" });
       fetchQuestions();
     } catch (err) {
       console.error(err);
-      alert("Error al crear pregunta");
+      alert("Error al crear pregunta", err);
     } finally {
       setLoading(false);
     }
@@ -224,7 +236,7 @@ export default function AdminQuestions() {
           )}
           <button
             type="button"
-            onClick={() => setResumen(calcularResumen(listaEncuestas))}
+            onClick={manejarResumen}
             // onClick={'disabled'}
             className="w-full mt-3 bg-red-800 text-white py-2 rounded-xl hover:opacity-80"
           >
@@ -248,14 +260,14 @@ export default function AdminQuestions() {
 
           <button
             type="button"
-            onClick={() => setListaEncuestas(obtenerEncuestas())}
+            onClick={cargarHistorial}
             // onClick={'disabled'}
             className="w-full mt-2 bg-green-500 text-white py-2 rounded-xl"
 
           >
             Ver historial de encuestas
           </button>
-          {listaEncuestas.map((encuesta) => (
+          {listaEncuestas && listaEncuestas.map((encuesta) => (
             <div key={encuesta.id} className="p-4 border rounded-xl">
               <p>⭐ Promedio: {encuesta.average_score}</p>
 
