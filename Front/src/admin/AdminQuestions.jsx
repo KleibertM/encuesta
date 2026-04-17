@@ -15,7 +15,10 @@ export default function AdminQuestions() {
   const API2 = "https://encuesta-6b87.onrender.com";
   const API = "http://localhost:3000";
 
-
+  useEffect(() => {
+    fetchQuestions(); // Carga las preguntas para la lista
+    cargarHistorial(); // Carga las encuestas para que el resumen funcione
+  }, []);
   // 🔄 Cargar preguntas
   const fetchQuestions = async () => {
     try {
@@ -73,29 +76,26 @@ export default function AdminQuestions() {
   // }, []);
 
   const manejarResumen = () => {
-    // Solo calculamos si ya hay encuestas cargadas
     if (listaEncuestas.length > 0) {
       const res = calcularResumen(listaEncuestas);
       setResumen(res);
     } else {
-      alert("Primero carga el historial de encuestas");
+      alert("No hay encuestas para calcular resultados.");
     }
   };
   const calcularResumen = (encuestas) => {
-    if (!encuestas.length) return null;
+    if (!encuestas || encuestas.length === 0) return null;
 
     const total = encuestas.length;
-
     const suma = encuestas.reduce(
-      (acc, e) => acc + parseFloat(e.average_score),
+      (acc, e) => acc + parseFloat(e.average_score || 0),
       0
     );
-
     const promedio = (suma / total).toFixed(2);
 
     return {
-      total,
-      promedio,
+      totalEncuestas: total,    // Nombre coincide con el JSX
+      promedioGeneral: promedio  // Nombre coincide con el JSX
     };
   };
   // ✍️ Manejar input
@@ -133,13 +133,11 @@ export default function AdminQuestions() {
   // ❌ Desactivar
   const handleDeactivate = async (id) => {
     if (!confirm("¿Desactivar esta pregunta?")) return;
-
     try {
       await axios.patch(`${API2}/api/questions/deactivate/${id}`);
-      fetchQuestions();
+      await fetchQuestions(); // Esperamos a que recargue
     } catch (err) {
-      console.error(err);
-      alert("Error al desactivar");
+      alert("Error al desactivar. Verifica los permisos de PATCH en el servidor.");
     }
   };
 
@@ -268,20 +266,36 @@ export default function AdminQuestions() {
           >
             Ver historial de encuestas
           </button>
-          {listaEncuestas && listaEncuestas.map((encuesta) => (
-            <div key={encuesta.id} className="p-4 border rounded-xl">
-              <p>⭐ Promedio: {encuesta.average_score}</p>
+          {/* Sección de Historial */}
+          {listaEncuestas.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-xl font-bold mb-4 text-gray-700">Historial Reciente</h2>
+              <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                {listaEncuestas.map((encuesta) => (
+                  <div key={encuesta.id} className="p-4 border bg-gray-50 rounded-xl shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-500">
+                        ID: #{encuesta.id}
+                      </span>
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold">
+                        ⭐ {encuesta.average_score}
+                      </span>
+                    </div>
 
-              <p>
-                📊 Respuestas:
-                {encuesta.answers.map(a => a.score).join(" - ")}
-              </p>
+                    <p className="text-xs text-gray-400 mb-2">
+                      Respuestas: {encuesta.answers.map(a => a.score).join(" | ")}
+                    </p>
 
-              {encuesta.suggestion && (
-                <p>💬 {encuesta.suggestion}</p>
-              )}
+                    {encuesta.suggestion && (
+                      <div className="bg-white p-2 rounded border text-sm italic text-gray-600">
+                        "{encuesta.suggestion}"
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          )}
 
         </div>
 
