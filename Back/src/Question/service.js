@@ -25,3 +25,17 @@ export const deactivateQuestionService = async (id) => {
 
   return question;
 };
+
+
+export const activateQuestionService = async (id) => {
+  const question = await Question.findByPk(id);
+
+  if (!question) {
+    throw createError(404, "Pregunta no encontrada");
+  }
+
+  question.is_active = true;
+  await question.save();
+
+  return question;
+};

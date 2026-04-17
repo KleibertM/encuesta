@@ -17,17 +17,17 @@ export default function AdminDashboard() {
     const [trend, setTrend] = useState([]);
     const [distribution, setDistribution] = useState([]);
 
-    const API = "https://encuesta-6b87.onrender.com";
-
+    const API2 = "https://encuesta-6b87.onrender.com";
+const API = "http://localhost:3000";
     const fetchData = async () => {
         try {
             const token = localStorage.getItem("token");
 
             const [summaryRes, trendRes] = await Promise.all([
-                axios.get(`${API}/dashboard/summary`, {
+                axios.get(`${API2}/dashboard/summary`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                axios.get(`${API}/dashboard/trend?group_by=day`, {
+                axios.get(`${API2}/dashboard/trend?group_by=day`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
     const fetchDistribution = async () => {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(`${API}/dashboard/distribution`, {
+        const res = await axios.get(`${API2}/dashboard/distribution`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 

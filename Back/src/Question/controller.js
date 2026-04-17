@@ -3,6 +3,7 @@ import {
   createQuestionService,
   getQuestionsService,
   deactivateQuestionService,
+  activateQuestionService,
 } from "./service.js";
 
 export const createQuestion = async (req, res, next) => {
@@ -33,9 +34,21 @@ export const getQuestions = async (req, res, next) => {
 
 export const deactivateQuestion = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.query.id;
 
     const question = await deactivateQuestionService(id);
+
+    res.json({ ok: true, data: question });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const activateQuestion = async (req, res, next) => {
+  try {
+    const id = req.params.id || req.query.id;
+
+    const question = await activateQuestionService(id);
 
     res.json({ ok: true, data: question });
   } catch (err) {

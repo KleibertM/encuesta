@@ -12,13 +12,14 @@ export default function AdminQuestions() {
   const [listaEncuestas, setListaEncuestas] = useState([]);
   const [resumen, setResumen] = useState(null);
 
+  const API2 = "https://encuesta-6b87.onrender.com";
+  const API = "http://localhost:3000";
 
-  const API = "https://encuesta-6b87.onrender.com/api/questions";
 
   // 🔄 Cargar preguntas
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get(API);
+      const res = await axios.get(`${API2}/api/questions`);
       setQuestions(res.data.data);
     } catch (err) {
       console.error(err);
@@ -27,7 +28,7 @@ export default function AdminQuestions() {
   };
   const obtenerEncuestas = async () => {
     try {
-      const res = await axios.get("https://encuesta-6b87.onrender.com/surveys", {
+      const res = await axios.get(`${API2}/surveys`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -39,33 +40,33 @@ export default function AdminQuestions() {
     }
   };
 
-  const calcularResultados = (respuestas) => {
-    const valores = Object.values(respuestas).filter(
-      (v) => typeof v === "number"
-    );
+  // const calcularResultados = (respuestas) => {
+  //   const valores = Object.values(respuestas).filter(
+  //     (v) => typeof v === "number"
+  //   );
 
-    const totalRespuestas = valores.length;
-    const suma = valores.reduce((acc, val) => acc + val, 0);
-    const promedio = suma / totalRespuestas;
+  //   const totalRespuestas = valores.length;
+  //   const suma = valores.reduce((acc, val) => acc + val, 0);
+  //   const promedio = suma / totalRespuestas;
 
-    return {
-      totalRespuestas,
-      suma,
-      promedio: promedio.toFixed(2),
-    };
-  };
-  useEffect(() => {
-    fetchQuestions();
-    if (listaEncuestas.length > 0) {
-      setResumen(calcularResumen(listaEncuestas));
-    }
-    const cargar = async () => {
-      const data = await obtenerEncuestas();
-      setListaEncuestas(data);
-    };
+  //   return {
+  //     totalRespuestas,
+  //     suma,
+  //     promedio: promedio.toFixed(2),
+  //   };
+  // };
+  // useEffect(() => {
+  //   fetchQuestions();
+  //   if (listaEncuestas.length > 0) {
+  //     setResumen(calcularResumen(listaEncuestas));
+  //   }
+  //   const cargar = async () => {
+  //     const data = await obtenerEncuestas();
+  //     setListaEncuestas(data);
+  //   };
 
-    cargar();
-  }, []);
+  //   cargar();
+  // }, []);
 
 
   const calcularResumen = (encuestas) => {
@@ -105,7 +106,7 @@ export default function AdminQuestions() {
     try {
       setLoading(true);
 
-      await axios.post(API, form);
+      await axios.post(API2, form);
 
       setForm({ title: "", description: "" });
       fetchQuestions();
@@ -122,11 +123,23 @@ export default function AdminQuestions() {
     if (!confirm("¿Desactivar esta pregunta?")) return;
 
     try {
-      await axios.patch(`${API}/${id}/deactivate`);
+      await axios.patch(`${API2}/api/questions/deactivate/${id}`);
       fetchQuestions();
     } catch (err) {
       console.error(err);
       alert("Error al desactivar");
+    }
+  };
+
+  const handleActivate = async (id) => {
+    if (!confirm("¿Activar esta pregunta?")) return;
+
+    try {
+      await axios.patch(`${API2}/api/questions/deactivate/${id}`);
+      fetchQuestions();
+    } catch (err) {
+      console.error(err);
+      alert("Error al Activar");
     }
   };
 
@@ -191,21 +204,28 @@ export default function AdminQuestions() {
                       {q.description}
                     </p>
                   </div>
-
-                  <button
+                  {q.is_active ? <button
                     onClick={() => handleDeactivate(q.id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
                   >
                     Desactivar
-                  </button>
+                  </button> :
+                    <button
+                      onClick={() => handleActivate(q.id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
+                    >
+                      Activar
+                    </button>}
+
+
                 </div>
               ))}
             </div>
           )}
           <button
             type="button"
-            // onClick={() => setResumen(calcularResumen(listaEncuestas))}
-            onClick={'disabled'}
+            onClick={() => setResumen(calcularResumen(listaEncuestas))}
+            // onClick={'disabled'}
             className="w-full mt-3 bg-red-800 text-white py-2 rounded-xl hover:opacity-80"
           >
             Ver resultados acumulados
@@ -228,10 +248,10 @@ export default function AdminQuestions() {
 
           <button
             type="button"
-            // onClick={() => setListaEncuestas(obtenerEncuestas())}
-            onClick={'disabled'}
+            onClick={() => setListaEncuestas(obtenerEncuestas())}
+            // onClick={'disabled'}
             className="w-full mt-2 bg-green-500 text-white py-2 rounded-xl"
-            
+
           >
             Ver historial de encuestas
           </button>

@@ -103,9 +103,16 @@ export default function EncuestaForm() {
                 onSubmit={handleSubmit}
                 className="bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl w-full max-w-2xl transition-all"
             >
-                <h1 className="text-2xl md:text-3xl font-bold mb-2 text-center">
-                    Encuesta de Satisfacción
-                </h1>
+                <div className="flex items-center justify-center gap-4 mb-2">
+                    <h1 className="text-2xl md:text-3xl font-bold">
+                        Encuesta de Satisfacción
+                    </h1>
+                    <img
+                        src="https://marketeando.pe/wp-content/uploads/2024/04/logo-marketeando-qk3c4only7ldrluzhpk751uxolo1j7fbxk3x91c75q.png"
+                        alt="Logo"
+                        className="h-20 w-auto" // Ajusta el tamaño aquí
+                    />
+                </div>
 
                 <p className="text-sm text-gray-600 mb-6 text-center">
                     Califique del 1 al 5 donde 1 = Nada satisfecho y 5 = Muy satisfecho
@@ -160,7 +167,7 @@ export default function EncuestaForm() {
 
                 <button
                     type="submit"
-                    className="w-full mt-6 bg-blue-500 text-white py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all"
+                    className="w-full mt-6 bg-[#ff5400] text-white py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all"
                 >
                     Enviar encuesta
                 </button>
