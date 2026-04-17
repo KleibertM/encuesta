@@ -17,9 +17,9 @@ export const createSurveyService = async ({
   // }
 
   for (const ans of answers) {
-    if (!PREGUNTAS_VALIDAS.includes(ans.question_id)) {
-      throw createError(400, `question_id inválido: ${ans.question_id}`);
-    }
+    // if (!PREGUNTAS_VALIDAS.includes(ans.question_id)) {
+    //   throw createError(400, `question_id inválido: ${ans.question_id}`);
+    // }
 
     if (
       typeof ans.score !== "number" ||

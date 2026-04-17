@@ -13,7 +13,7 @@ export default function EncuestaForm() {
             try {
                 const res = await axios.get("https://encuesta-6b87.onrender.com/api/questions");
 
-                setPreguntas(res.data.data);
+                setPreguntas(res.data.data.filter(q => q.is_active));
             } catch (error) {
                 console.error("Error cargando preguntas", error);
             }
@@ -59,7 +59,7 @@ export default function EncuestaForm() {
         const answers = preguntas.map((pregunta) => ({
             question_id: pregunta.id,
             question_title: pregunta.title,
-            score: respuestas[pregunta.id],
+            score: Number(respuestas[pregunta.id]),
         }));
 
 
@@ -91,8 +91,14 @@ export default function EncuestaForm() {
             setListaEncuestas(historial);
 
         } catch (error) {
-            console.error("Error enviando encuesta:", error);
-            alert("Error al enviar la encuesta");
+            if (error.response) {
+                // El servidor respondió con un código fuera del rango 2xx
+                console.error("Data del error:", error.response.data);
+                console.error("Status del error:", error.response.status);
+                alert(`Error: ${error.response.data.message || "Datos inválidos"}`);
+            } else {
+                console.error("Error de red o configuración:", error.message);
+            }
         }
     };
 
