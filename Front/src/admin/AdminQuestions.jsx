@@ -216,18 +216,19 @@ const manejarResumen = () => {
                       {q.description}
                     </p>
                   </div>
-                  {q.is_active ? <button
+                  {q.is_active ? 
+                  (<button
                     onClick={() => handleDeactivate(q.id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
                   >
                     Desactivar
-                  </button> :
-                    <button
+                  </button> ):
+                    (<button
                       onClick={() => handleActivate(q.id)}
                       className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
                     >
                       Activar
-                    </button>}
+                    </button>)}
 
 
                 </div>
