@@ -89,6 +89,7 @@ export default function EncuestaForm() {
             setResultado(resultadoCalculado);
             setRespuestas({});
             setListaEncuestas(historial);
+            alert('Respuesta enviada con exito. Muchas gracias.')
 
         } catch (error) {
             if (error.response) {
